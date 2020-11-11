@@ -11,6 +11,7 @@
 # Parishes = https://geoportal.statistics.gov.uk/search?collection=Dataset&sort=name&tags=all(BDY_PARNCP%2CDEC_2019)
 # Parishes - Create a .csv of parishes and their County. Note - Parishes of the same name occur in different counties
 # FP - Average farmland price = https://www.fwi.co.uk/business/markets-and-trends/land-markets/find-out-average-farmland-prices-where-you-live
+# FP - Create a .csv of price per land type, quality and county. Note - some counties missing (NA)
 # ALC - Provisional Agricultural Land Classification Grade = https://naturalengland-defra.opendata.arcgis.com/datasets/provisional-agricultural-land-classification-alc-england/data
 # LC - Land cover map 2019 = https://catalogue.ceh.ac.uk/documents/44c23778-4a73-4a8f-875f-89b23b91ecf8
 
@@ -19,13 +20,16 @@
 
 # Parish:
 # Buffer UK_Parishes with distance = 0 to remove invalid geometries. Check with 'Check validity'
+# Output: 'UK_Buffered_Parishes.shp'
 
 # ALC:
 # Buffer ALC with distance = 0 to remove invalid geometries. Check with 'Check validity'
+# Output: 'UK_Buffered_ALC.shp'
 
 # LC:
-# Polygonize 'WRE_LC_Classifications.tif' to 'WRE_LC_Classifications.shp'
+# Polygonize 'WRE_LC_Classifications.tif' to 'WRE_LC_Classifications.shp'       # can we provide time estimate for this step?
 # Buffer WRE_LC_FT with distance = 0 to remove invalid geometries. Check with 'Check validity'
+# Output: 'Buffer_WRE_LC_FT.shp'
 
 
 ####################################### Prepare script
@@ -63,7 +67,7 @@ plot(WRE)                                                                       
 
 # Load in UK Parish data
 
-# Buffer UK_Parishes with distance = 0 to remove invalid geometries. Check with 'Check validity'
+# QGIS - Buffer UK_Parishes with distance = 0 to remove invalid geometries. Check with 'Check validity'. Save as 'UK_Buffered_Parishes.shp'
 
 UK_Parish <- readOGR(file.choose())                                             # Read in 'UK_Buffered_Parishes.shp'
 UK_Parish@data                                                                  # Check/visualise data
@@ -74,7 +78,7 @@ plot(WRE, add=TRUE, col='red')
 # Prepare WRE Parish data
 
 st_crs(UK_Parish)==st_crs(WRE)                                                  # Check same projections
-WRE_Parishes<-crop(UK_Parish, WRE)                                              # Crop Parish to WRE region
+WRE_Parishes<-crop(UK_Parish, WRE)                                              # Crop Parish to WRE region *?* DOES THE CROP GIVE SAME RESULTS AS BY LIST IN Q?
 WRE_Parishes@data                                                               # Check/visualise data
 plot(WRE_Parishes)                                                              # Plot
 
@@ -89,7 +93,7 @@ writeOGR(WRE_Parishes, dsn='WRE_Parishes',
 
 # Load in UK ALC data
 
-# Buffer ALC with distance = 0 to remove invalid geometries. Check with 'Check validity'
+# QGIS - Buffer ALC with distance = 0 to remove invalid geometries. Check with 'Check validity' Save as 'UK_Buffered_ALC.shp'
 
 UK_ALC <- readOGR(file.choose())                                                # Read in 'UK_Buffered_ALC.shp'
 UK_ALC@data                                                                     # Check/visualise data
@@ -151,8 +155,8 @@ writeOGR(WRE_LC, dsn='WRE_LC', layer='WRE_LC_FT', driver="ESRI Shapefile")      
 
 # Load in data
 
-WRE_Parishes <- st_read('WRE_Parishes.shp')                                     # Read in 'WRE_Parish.shp'
-WRE_ALC <- st_read('WRE_ALC.shp')                                               # Read in 'WRE_ALC.shp'
+WRE_Parishes <- st_read('WRE_Parishes.shp')                                     # Read in 'WRE_Parish.shp' [shouldnt this be 'UK_Buffered_Parishes.shp'?]
+WRE_ALC <- st_read('WRE_ALC.shp')                                               # Read in 'WRE_ALC.shp' [shouldnt this be 'UK_Buffered_ALC.shp'?]
 WRE_LC <- st_read('Buffer_WRE_LC_FT.shp')                                       # Read in 'Buffer_WRE_LC_FT.shp'
 
 # Extract data from ALC and LC to each parish

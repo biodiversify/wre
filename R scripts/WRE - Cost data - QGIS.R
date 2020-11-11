@@ -25,7 +25,7 @@ library(raster)
 ##### Extract Price
 
 # Load in data
-Q_Price <- readOGR(file.choose())                                               # Read in 'Cost.shp'
+Q_Price <- readOGR(file.choose())                                               # Read in 'Cost.shp' [may be explain what this is]
 FP <- read.csv (file.choose(),header=TRUE)                                      # Read in 'Farmland_price_FW.csv'
 
 # Extract Price
